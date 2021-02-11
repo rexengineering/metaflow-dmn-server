@@ -1,0 +1,42 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: dmnserver
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: dmnserver
+  labels:
+    app: dmnserver
+spec:
+  ports:
+  - name: http
+    port: 8001
+    targetPort: 8001
+  selector:
+    app: dmnserver
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dmnserver
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: dmnserver
+      version: v1
+  template:
+    metadata:
+      labels:
+        app: dmnserver
+        version: v1
+    spec:
+      serviceAccountName: dmnserver
+      containers:
+      - image: dmn-server:latest
+        imagePullPolicy: IfNotPresent
+        name: dmnserver
+        ports:
+        - containerPort: 8001

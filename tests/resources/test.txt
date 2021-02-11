@@ -1,0 +1,4 @@
+if name = "jim" then "server.one.somwhere.net"
+else if name = "sam" then "server.two.somwhere.net"
+else if name = "alice" then "server.three.somwhere.net"
+else "server.zero.somewhere.net"
