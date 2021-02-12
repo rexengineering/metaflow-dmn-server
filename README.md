@@ -26,12 +26,25 @@ curl http://localhost:8001/version | jq
 }
 ```
 
-/dmn/decision-tree
-/dmn/dt
+/dmn/decision-tree or /dmn/dt
 
+This accepts a decision tree either DMN XML format, or an abbreviated Riehl JSON format. The format is specified in the application mime type headers. 
+```
+$ curl -H 'Content-type:application/xml' http://localhost:8001/dt?status=gold\&sum=1000.3d -d @check-order.dmn
 
+$ curl -H 'Content-type:application/json' http://localhost:8001/dt -d @test.json
+```
 
+/feel
 
+This executes simple FEEL expressions. Values are listed as KVP in the URI, and the expression can be passed as the 'expr' value or via data.
+```
+$ curl http://localhost:8001/feel?x=2\&y=3\&expr=x%2By
+
+$ curl http://localhost:8001/feel?x=2\&y=3 -d "x + y"
+
+$ curl http://localhost:8001/feel?name=jim -d @test.txt
+```
 
 ## Building from source
 
@@ -64,19 +77,49 @@ kube-system    storage-provisioner                      1/1     Running   13    
 kube-system    vpnkit-controller                        1/1     Running   2          23d
 $
 ```
+
 ## Testing the docker container
 
-Outside of writing ac
+Outside of writing a client to run as a pod to interact with the server, the easiest I've found is to deploy a ubuntu 
+container into the default name space. Put the following into a file e.g. ubuntu.yaml:
 
-Welcome to the VS Code Java world. Here is a guideline to help you get started to write Java code in Visual Studio Code.
 
-## Folder Structure
+```
+apiVersion: v1
+kind: Pod
+metadata:
+  name: ubuntu
+  labels:
+    app: ubuntu
+spec:
+  containers:
+  - image: ubuntu
+    command:
+      - "sleep"
+      - "604800"
+    imagePullPolicy: IfNotPresent
+    name: ubuntu
+  restartPolicy: Always
+```
 
-The workspace contains two folders by default, where:
+In order to talk to the dmnserver you will need it's IP address inside the cluster:
 
-- `src`: the folder to maintain sources
-- `lib`: the folder to maintain dependencies
+```
+$ kubectl get svc
+NAME         TYPE        CLUSTER-IP     EXTERNAL-IP   PORT(S)    AGE
+dmnserver    ClusterIP   10.99.4.150    <none>        8001/TCP   20h
+feelserver   ClusterIP   10.104.28.68   <none>        8001/TCP   13d
+kubernetes   ClusterIP   10.96.0.1      <none>        443/TCP    23d
+```
 
-## Dependency Management
+Now deploy the base ubuntu image then install a couple of things:
 
-The `JAVA DEPENDENCIES` view allows you to manage your dependencies. More details can be found [here](https://github.com/microsoft/vscode-java-pack/blob/master/release-notes/v0.9.0.md#work-with-jar-files-directly).
+```
+$ kubectl apply -f ubuntu.yaml
+$ kubectl exec --stdin --tty ubuntu -- /bin/bash
+root@ubuntu:/# apt-get update
+root@ubuntu:/# apt-get install curl
+root@ubuntu:/# curl http://10.99.4.150:8001/version
+{"response":{"port":8001,"host":"0.0.0.0","title":"DMN Evaluator Engine","version":"0.0"}}
+root@ubuntu:/# exit
+```
