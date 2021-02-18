@@ -2,11 +2,13 @@ apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: dmnserver
+  namespace: rexflow
 ---
 apiVersion: v1
 kind: Service
 metadata:
   name: dmnserver
+  namespace: rexflow
   labels:
     app: dmnserver
 spec:
@@ -21,6 +23,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: dmnserver
+  namespace: rexflow
 spec:
   replicas: 1
   selector:

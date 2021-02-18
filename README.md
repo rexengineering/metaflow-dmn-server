@@ -63,7 +63,7 @@ $ docker build -t dmnserver .
 $ kubectl apply -f deploy.yaml
 $ kubectl get po --all-namespace
 NAMESPACE      NAME                                     READY   STATUS    RESTARTS   AGE
-default        dmnserver-6d566d7695-wkdvk               1/1     Running   0          4s
+rexflow        dmnserver-6d566d7695-wkdvk               1/1     Running   0          4s
 istio-system   istio-ingressgateway-559f565fcd-ncn7b    1/1     Running   1          2d18h
 istio-system   istiod-545bb98448-66tlj                  1/1     Running   1          2d18h
 kube-system    coredns-f9fd979d6-667kk                  1/1     Running   2          23d
@@ -81,7 +81,7 @@ $
 ## Testing the docker container
 
 Outside of writing a client to run as a pod to interact with the server, the easiest I've found is to deploy a ubuntu 
-container into the default name space. Put the following into a file e.g. ubuntu.yaml:
+container into the rexflow name space. Put the following into a file e.g. ubuntu.yaml:
 
 
 ```
