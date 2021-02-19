@@ -38,7 +38,7 @@ spec:
     spec:
       serviceAccountName: dmnserver
       containers:
-      - image: dmn-server:latest
+      - image: dmnserver:latest
         imagePullPolicy: IfNotPresent
         name: dmnserver
         ports:
