@@ -1,4 +1,4 @@
-FROM openjdk:11
+FROM openjdk:11 AS base
 # install any other useful apps here
 RUN apt-get update 
 RUN apt-get install -y vim curl 
@@ -12,5 +12,11 @@ ENV DMN_PORT=8001
 EXPOSE 8001
 
 RUN javac DmnServer.java
+
+FROM base AS test
+CMD [ "true" ]
+
+FROM base AS container
+
 CMD ["java", "DmnServer"]
 
